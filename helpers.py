@@ -17,6 +17,7 @@ def TIMBRE(X,Y,inds_test,inds_train,hidden_nodes=0):
   #model: trained network
   #fittedModel: history of loss and accuracy for test and train data
   Y = np_utils.to_categorical(Y)                          #use one-hot encoding for the class labels
+  print(Y.shape)
   backend.clear_session()
   # Early Stopping: stop training model when test loss stops decreasing
   es = EarlyStopping(monitor = 'val_loss', patience = 1)
