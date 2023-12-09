@@ -46,6 +46,12 @@ def TIMBRE(X,Y,inds_test,inds_train,hidden_nodes=0):
     shuffle=True, callbacks=[es])
   return model, fittedModel
 
+def layer_output(X,m,layer_num):
+  #stack the real and imaginary components of the data
+  X = np.concatenate((np.real(X), np.imag(X)), axis = 1) 
+  m1 = models.Model(inputs=m.input, outputs=m.layers[layer_num].output)
+  return m1.predict(X) #return output of layer layer_num
+
 def whiten(X,inds_train,fudge_factor=10**-5):
     _,_,u = np.linalg.svd(X[inds_train,:],full_matrices=False,compute_uv=True)
     X = X@np.conj(u.T)
