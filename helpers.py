@@ -1,13 +1,13 @@
-from keras import utils as np_utils
 from keras.callbacks import EarlyStopping
 from keras import models, layers, optimizers, backend, constraints, activations
 import complexnn
 import numpy as np
+from keras import utils as np_utils
 
 def TIMBRE(X,Y,inds_test,inds_train,hidden_nodes=0):
   #INPUTS:
   #X = Multi-channel data (T samples x N channels, complex-valued)
-  #Y = One-hot encoded labels (T samples x C classes, binary)
+  #Y = Category labels (T samples, integer-valued)
   #inds_test = test indices (Either T x 1 boolean, or U x 1 integers)
   #inds_train = train indices (Either T x 1 boolean, or U x 1 integers)
   #nodes_per_label = how many nodes to use per class (only applies when add_extra_layer=True)
@@ -16,7 +16,7 @@ def TIMBRE(X,Y,inds_test,inds_train,hidden_nodes=0):
   #OUTPUTS:
   #model: trained network
   #fittedModel: history of loss and accuracy for test and train data
-
+  Y = np_utils.to_categorical(Y)                          #use one-hot encoding for the class labels
   backend.clear_session()
   # Early Stopping: stop training model when test loss stops decreasing
   es = EarlyStopping(monitor = 'val_loss', patience = 1)
