@@ -26,7 +26,8 @@ def get_behav(mat_file, fs = 25):
     Column 1: Maze arm (-1/0/1/2) (-1 = not in maze arm)
     Column 2: Correct (0/1)
     Column 3: other/first approach/port/last departure (0/1/2/3)
-    Column 4: position in mm
+    Column 4: x position in mm
+    Column 5: y position in mm
     """    
     dec = int(1250/fs) #decimation factor
     mat = io.loadmat(mat_file, variable_names = ['Track'])
