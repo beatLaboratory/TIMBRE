@@ -1,3 +1,9 @@
+"""
+A set of helper functions for running TIMBRE, whitening data, and visualizing outputs.
+
+@author: Gautam Agarwal
+"""
+
 from keras.callbacks import EarlyStopping
 from keras import models, layers, optimizers, backend, constraints, activations
 import complexnn
@@ -91,6 +97,7 @@ def whiten(X,inds_train,fudge_factor=10**-5):
 def accumarray(subs, vals, size=None, fill_value=0):
     """
     Averages all values that are associated with the same index. Does this separately for each column of vals.
+    Useful for visualizing dependency of layer outputs on behavioral features. 
 
     Parameters:
     - subs: An MxN array of subscripts, where M is the number of entries in vals and N is the number of dimensions of the output.
