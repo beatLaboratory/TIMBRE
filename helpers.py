@@ -10,7 +10,7 @@ import complexnn
 import numpy as np
 from keras import utils as np_utils
 
-def TIMBRE(X,Y,inds_test,inds_train,hidden_nodes=0,learn_rate=.001):
+def TIMBRE(X,Y,inds_test,inds_train,hidden_nodes=0,learn_rate=.001,is_categorical=True):
   """
   Learns oscillatory patterns that are predictive of class labels
   
@@ -21,6 +21,7 @@ def TIMBRE(X,Y,inds_test,inds_train,hidden_nodes=0,learn_rate=.001):
   - inds_train = train indices (Either T x 1 boolean, or U x 1 integers)
   - hidden_nodes = how many nodes to use (no hidden layer if set to 0)
   - learn_rate = how quickly the network learns
+  - is_categorical = whether the output consists of discrete classes 
  
   Returns:
   - model: trained network
@@ -30,7 +31,11 @@ def TIMBRE(X,Y,inds_test,inds_train,hidden_nodes=0,learn_rate=.001):
   #stack the real and imaginary components of the data
   X = np.concatenate((np.real(X), np.imag(X)), axis = 1) 
   #use one-hot encoding for the class labels
-  Y = np_utils.to_categorical(Y)                          
+  if is_categorical:
+      Y = np_utils.to_categorical(Y)
+      my_loss = 'categorical_crossentropy'
+  else:
+      my_loss = 'kde'
   backend.clear_session()
   # Early Stopping: stop training model when test loss stops decreasing
   es = EarlyStopping(monitor = 'val_loss', patience = 1)
@@ -49,7 +54,7 @@ def TIMBRE(X,Y,inds_test,inds_train,hidden_nodes=0,learn_rate=.001):
   model.add(layers.Activation(activations.softmax))
   if hidden_nodes > 0: #Need another layer for output
     model.add(layers.Dense(Y.shape[1], activation='softmax'))
-  model.compile(loss='categorical_crossentropy', optimizer=adam,metrics = ['accuracy'])
+  model.compile(loss=my_loss, optimizer=adam,metrics = ['accuracy'])
   # Train the model
   fittedModel = model.fit(X[inds_train,:], Y[inds_train,:], epochs = 100,
     verbose = 2, validation_data=(X[inds_test,:], Y[inds_test,:]),
