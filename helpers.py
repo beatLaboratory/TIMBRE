@@ -79,13 +79,13 @@ def layer_output(X,m,layer_num):
   m1 = models.Model(inputs=m.input, outputs=m.layers[layer_num].output)
   return m1.predict(X) #return output of layer layer_num
 
-def test_train(lapID,use_sample,n_folds = 5,which_fold = 0):
+def test_train(lapID,which_phase,n_folds = 5,which_fold = 0):
     """
     Returns test and train samples
     
     Parameters:
     - lapID: contains info about trial number and maze arm of each sample
-    - use_sample: which samples to use for fold assignment
+    - which_phase: which phase of the session to use (see get_data\get_behav for info)
     - n_folds: how many folds to assign
     - which_fold: which fold to return values for
     
@@ -94,6 +94,9 @@ def test_train(lapID,use_sample,n_folds = 5,which_fold = 0):
     - test_inds: which samples to use for testing model
     """
     ctr = np.zeros(3)
+    use_sample = lapID[:,3] == which_phase
+    if which_phase == 2: # period where rat is staying at port
+        use_sample = use_sample & lapID[:,2] == 1 #only use correct trials
     fold_assign = -np.ones(np.size(use_sample))
     for i in range(np.max(lapID[:,0])):
         inds = lapID[:,0] == i & use_sample
