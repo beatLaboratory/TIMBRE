@@ -172,7 +172,7 @@ def whiten(X,inds_train,fudge_factor=10**-5):
     X = X/Xv
     return X, u, Xv
 
-def filter_data(data, cutoff, fs, filt_type='high', order=5):
+def filter_data(data, cutoff, fs, filt_type='high', order=5, use_hilbert = False):
     """
     Applies a column-wise zero-phase filter to data
     
@@ -182,16 +182,21 @@ def filter_data(data, cutoff, fs, filt_type='high', order=5):
     fs : sampling rate
     filt_type : specify as 'high', 'low', or 'band'.
     order : filter order. The default is 5.
+    use_hilbert: whether to apply a Hilbert transform (default = False)
 
     Returns
     -------
-    a T x N array with filtered data
+    data : a T x N array with filtered data
 
     """
     nyq = 0.5 * fs
     normal_cutoff = cutoff / nyq
     b, a = signal.butter(order, normal_cutoff, btype=filt_type, analog=False)
-    return signal.filtfilt(b, a, data,axis=0)
+    data = signal.filtfilt(b, a, data,axis=0)
+    if use_hilbert:
+        data = signal.hilbert(data,axis=0)
+        
+    return data
 
 def accumarray(subs, vals, size=None, fill_value=0):
     """
