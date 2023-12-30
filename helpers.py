@@ -10,6 +10,7 @@ import complexnn
 import numpy as np
 from keras import utils as np_utils
 from random import sample
+from scipy import signal
 
 def TIMBRE(X,Y,inds_test,inds_train,hidden_nodes=0,learn_rate=.001,is_categorical=True):
   """
@@ -170,6 +171,27 @@ def whiten(X,inds_train,fudge_factor=10**-5):
     Xv = np.sqrt(Xv+sum(Xv)*fudge_factor)
     X = X/Xv
     return X, u, Xv
+
+def filter_data(data, cutoff, fs, filt_type='high', order=5):
+    """
+    Applies a column-wise zero-phase filter to data
+    
+    Parameters:
+    data : a T x N array with filtered data
+    cutoff : cutoff frequency (should be 2 numbers for 'band')
+    fs : sampling rate
+    filt_type : specify as 'high', 'low', or 'band'.
+    order : filter order. The default is 5.
+
+    Returns
+    -------
+    a T x N array with filtered data
+
+    """
+    nyq = 0.5 * fs
+    normal_cutoff = cutoff / nyq
+    b, a = signal.butter(order, normal_cutoff, btype=filt_type, analog=False)
+    return signal.filtfilt(b, a, data,axis=0)
 
 def accumarray(subs, vals, size=None, fill_value=0):
     """
