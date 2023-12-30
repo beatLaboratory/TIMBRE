@@ -9,6 +9,7 @@ from keras import models, layers, optimizers, backend, constraints, activations
 import complexnn
 import numpy as np
 from keras import utils as np_utils
+from random import sample
 
 def TIMBRE(X,Y,inds_test,inds_train,hidden_nodes=0,learn_rate=.001,is_categorical=True):
   """
@@ -78,6 +79,74 @@ def layer_output(X,m,layer_num):
   m1 = models.Model(inputs=m.input, outputs=m.layers[layer_num].output)
   return m1.predict(X) #return output of layer layer_num
 
+def test_train(lapID,use_sample,n_folds = 5,which_fold = 0):
+    """
+    Returns test and train samples
+    
+    Parameters:
+    - lapID: contains info about trial number and maze arm of each sample
+    - use_sample: which samples to use for fold assignment
+    - n_folds: how many folds to assign
+    - which_fold: which fold to return values for
+    
+    Returns:
+    - train_inds: which samples to use for training model
+    - test_inds: which samples to use for testing model
+    """
+    ctr = np.zeros(3)
+    fold_assign = -np.ones(np.size(use_sample))
+    for i in range(np.max(lapID[:,0])):
+        inds = lapID[:,0] == i & use_sample
+        if np.sum(inds):
+            which_arm = np.mean(lapID[inds,1])
+            fold_assign[inds] = ctr[which_arm]%n_folds
+            ctr[which_arm] += 1
+    test_inds = fold_assign == which_fold
+    train_inds = np.isin(fold_assign, np.arange(n_folds)) & ~test_inds
+    #counts = np.histogram(lapID[train_inds,1],np.arange(np.max(lapID[:,1])))
+    train_inds = balanced_indices(lapID[:,1],train_inds)
+    return test_inds, train_inds
+    
+def balanced_indices(vector, bool_indices):
+    
+    """
+    Returns indices that balance the number of samples for each label in vector
+
+    Parameters:
+    vector: The input vector from which to select indices.
+    bool_indices: A boolean array indicating which indices in the vector to consider.
+
+    Returns:
+    list: A list of indices representing a balanced selection of the unique values in the subset of the vector.
+    
+    Generated using ChatGPT
+    """
+    # Convert boolean indices to actual indices
+    actual_indices = np.where(bool_indices)[0]
+
+    # Extract the elements and their corresponding indices
+    selected_elements = [(vector[i], i) for i in actual_indices]
+
+    # Find unique elements
+    unique_elements = np.unique(vector[bool_indices])
+
+    # Group elements by value and collect their indices
+    elements_indices = {element: [] for element in unique_elements}
+    for value, idx in selected_elements:
+        if value in elements_indices:
+            elements_indices[value].append(idx)
+
+    # Find the minimum count among the unique elements
+    min_count = min(len(elements_indices[element]) for element in unique_elements)
+
+    # Create a balanced set of indices
+    balanced_indices_set = []
+    for element in unique_elements:
+        if len(elements_indices[element]) >= min_count:
+            balanced_indices_set.extend(sample(elements_indices[element], min_count))
+
+    return balanced_indices_set
+
 def whiten(X,inds_train,fudge_factor=10**-5):
     """
     Decorrelates the input data
@@ -112,6 +181,8 @@ def accumarray(subs, vals, size=None, fill_value=0):
 
     Returns:
     - result: An array of accumulated values.
+    
+    Generated using ChatGPT
     """
     subs = subs.astype(int)
     if subs.ndim == 1:
