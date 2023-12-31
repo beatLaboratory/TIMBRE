@@ -102,7 +102,7 @@ def test_train(lapID,which_phase,n_folds = 5,which_fold = 0):
     for i in range(int(np.max(lapID[:,0]))):
         inds = lapID[:,0] == i & use_sample
         if np.sum(inds):
-            which_arm = int(stats.mode(lapID[inds,1]))
+            which_arm = int(lapID[inds,1][0])
             fold_assign[inds] = ctr[which_arm]%n_folds
             ctr[which_arm] += 1
     test_inds = fold_assign == which_fold
