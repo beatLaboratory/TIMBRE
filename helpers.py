@@ -99,7 +99,7 @@ def test_train(lapID,which_phase,n_folds = 5,which_fold = 0):
     if which_phase == 2: # period where rat is staying at port
         use_sample = use_sample & lapID[:,2] == 1 #only use correct trials
     fold_assign = -np.ones(np.size(use_sample))
-    for i in range(np.max(lapID[:,0])):
+    for i in range(int(np.max(lapID[:,0]))):
         inds = lapID[:,0] == i & use_sample
         if np.sum(inds):
             which_arm = np.mean(lapID[inds,1])
