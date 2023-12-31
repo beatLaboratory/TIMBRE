@@ -10,7 +10,7 @@ import complexnn
 import numpy as np
 from keras import utils as np_utils
 from random import sample
-from scipy import signal, stats
+from scipy import signal
 
 def TIMBRE(X,Y,inds_test,inds_train,hidden_nodes=0,learn_rate=.001,is_categorical=True):
   """
@@ -100,14 +100,13 @@ def test_train(lapID,which_phase,n_folds = 5,which_fold = 0):
         use_sample = use_sample & lapID[:,2] == 1 #only use correct trials
     fold_assign = -np.ones(np.size(use_sample))
     for i in range(int(np.max(lapID[:,0]))):
-        inds = lapID[:,0] == i & use_sample
+        inds = (lapID[:,0] == i) & use_sample
         if np.sum(inds):
             which_arm = int(lapID[inds,1][0])
             fold_assign[inds] = ctr[which_arm]%n_folds
             ctr[which_arm] += 1
     test_inds = fold_assign == which_fold
     train_inds = np.isin(fold_assign, np.arange(n_folds)) & ~test_inds
-    #counts = np.histogram(lapID[train_inds,1],np.arange(np.max(lapID[:,1])))
     train_inds = balanced_indices(lapID[:,1],train_inds)
     return test_inds, train_inds
     
@@ -149,7 +148,7 @@ def balanced_indices(vector, bool_indices):
         if len(elements_indices[element]) >= min_count:
             balanced_indices_set.extend(sample(elements_indices[element], min_count))
 
-    return balanced_indices_set
+    return np.array(balanced_indices_set)
 
 def whiten(X,inds_train,fudge_factor=10**-5):
     """
