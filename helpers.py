@@ -46,7 +46,7 @@ def carrier_based(X,Y,inds_test,inds_train,learn_rate=.001,is_categorical=True):
   num_chans = Y.shape[1]
   model = models.Sequential()
   # Layer 1: Takes a complex-valued projection of the input
-  model.add(complexnn.dense.ComplexDense(num_chans, input_shape=(X.shape[1],), use_bias=False, kernel_constraint = constraints.unit_norm()))
+  model.add(layers.dense(num_chans, input_shape=(X.shape[1],)))#, use_bias=False, kernel_constraint = constraints.unit_norm()))
   # Layer 2: Softmax of layer 2
   model.add(layers.Activation(activations.softmax))
   model.compile(loss=my_loss, optimizer=adam,metrics = ['accuracy'])
