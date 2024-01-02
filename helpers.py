@@ -12,7 +12,7 @@ from keras import utils as np_utils
 from random import sample
 from scipy import signal
 
-def TIMBRE(X,Y,inds_test,inds_train,hidden_nodes=0,learn_rate=.001,is_categorical=True):
+def TIMBRE(X,Y,inds_test,inds_train,hidden_nodes=0,learn_rate=.001,is_categorical=True,verbosity=0):
   """
   Learns oscillatory patterns that are predictive of class labels
   
@@ -24,6 +24,7 @@ def TIMBRE(X,Y,inds_test,inds_train,hidden_nodes=0,learn_rate=.001,is_categorica
   - hidden_nodes = how many nodes to use (no hidden layer if set to 0)
   - learn_rate = how quickly the network learns
   - is_categorical = whether the output consists of discrete classes 
+  - verbosity = amount of model training info to output (default = 0)
  
   Returns:
   - model: trained network
@@ -65,7 +66,7 @@ def TIMBRE(X,Y,inds_test,inds_train,hidden_nodes=0,learn_rate=.001,is_categorica
   test_acc = fittedModel.history['val_accuracy'][-1]
   return model, fittedModel, test_acc
 
-def carrier_based(X,Y,inds_test,inds_train,learn_rate=.001,is_categorical=True,subgroups = []):
+def carrier_based(X,Y,inds_test,inds_train,learn_rate=.001,is_categorical=True,subgroups=[],verbosity=0):
   """
   Predicts output using demodulated LFP and linear regression
   
@@ -76,6 +77,7 @@ def carrier_based(X,Y,inds_test,inds_train,learn_rate=.001,is_categorical=True,s
   - inds_train = train indices (Either T x 1 boolean, or U x 1 integers)
   - learn_rate = how quickly the network learns
   - is_categorical = whether the output consists of discrete classes 
+  - verbosity = amount of model training info to output (default = 0)
  
   Returns:
   - model: trained network
