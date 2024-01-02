@@ -1,5 +1,5 @@
 # TIMBRE
-**T**racking \n
+**T**racking \\n
 **I**nformative 
 **M**ultivariate 
 **B**rain 
