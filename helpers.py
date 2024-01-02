@@ -114,7 +114,6 @@ def carrier_based(X,Y,inds_test,inds_train,learn_rate=.001,is_categorical=True,s
     verbose = 2, validation_data=(X[inds_test], Yc[inds_test]),
     shuffle=True, callbacks=[es])
   if len(subgroups):
-    print(model.predict(X[inds_test]))
     test_acc = np.mean(np.floor(np.argmax(model.predict(X[inds_test]),axis=1)/np.max(subgroups+1))==Y[inds_test])
   else:
     test_acc = fittedModel.history['val_accuracy'][-1]
