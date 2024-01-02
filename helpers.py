@@ -60,7 +60,7 @@ def TIMBRE(X,Y,inds_test,inds_train,hidden_nodes=0,learn_rate=.001,is_categorica
   model.compile(loss=my_loss, optimizer=adam,metrics = ['accuracy'])
   # Train the model
   fittedModel = model.fit(X[inds_train,:], Y[inds_train,:], epochs = 100,
-    verbose = 1, validation_data=(X[inds_test,:], Y[inds_test,:]),
+    verbose = 0, validation_data=(X[inds_test,:], Y[inds_test,:]),
     shuffle=True, callbacks=[es])
   test_acc = fittedModel.history['val_accuracy'][-1]
   return model, fittedModel, test_acc
@@ -111,7 +111,7 @@ def carrier_based(X,Y,inds_test,inds_train,learn_rate=.001,is_categorical=True,s
   model.compile(loss=my_loss, optimizer=adam,metrics = ['accuracy'])
   # Train the model
   fittedModel = model.fit(X[inds_train], Yc[inds_train], epochs = 100,
-    verbose = 1, validation_data=(X[inds_test], Yc[inds_test]),
+    verbose = 0, validation_data=(X[inds_test], Yc[inds_test]),
     shuffle=True, callbacks=[es])
   if len(subgroups):
     test_acc = np.mean(np.floor(np.argmax(model.predict(X[inds_test]),axis=1)/np.max(subgroups+1))==Y[inds_test])
