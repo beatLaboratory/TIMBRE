@@ -253,7 +253,7 @@ def filter_data(data, cutoff, fs, filt_type='high', order=5, use_hilbert = False
         
     return data
 
-def group_by_pos(pos,num_bins):
+def group_by_pos(pos,num_bins,train_inds):
     """
     Subdivides track into bins for training linear classifier on demodulated LFP
     
@@ -266,8 +266,8 @@ def group_by_pos(pos,num_bins):
     -------
     pos : a vector of binned positions
     """
-    pos = pos - np.min(pos)
-    pos = pos / (np.max(pos)+10**-8)
+    pos = pos - np.min(pos[train_inds])
+    pos = pos / (np.max(pos[train_inds])+10**-8)
     pos = np.int32(np.floor(pos*num_bins))
     return pos
 
