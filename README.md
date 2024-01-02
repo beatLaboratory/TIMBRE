@@ -1,14 +1,9 @@
 # TIMBRE
-**T**racking 
-
+**T**racking \n
 **I**nformative 
-
 **M**ultivariate 
-
 **B**rain 
-
 **R**hythms 
-
 **E**fficiently
 
 
