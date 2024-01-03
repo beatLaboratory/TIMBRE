@@ -26,3 +26,9 @@ Here are some tips that I found helpful when using TIMBRE.
 
 ## References
 Agarwal, B Lustig, S Akera, E Pastalkova, AK Lee, FT Sommer. [News without the buzz: reading out weak theta rhythms in the hippocampus.](https://www.biorxiv.org/content/10.1101/2023.12.22.573160v1) bioRxiv, 2023.12. 22.573160
+
+Trabelsi C et al. [Deep Complex Networks.](https://github.com/ChihebTrabelsi/deep_complex_networks) International Conference on Learning Representations (ICLR), 2018.
+
+Dramsch J. [Keras implementation of Deep Complex Networks.](https://github.com/JesperDramsch/keras-complex)
+
+
