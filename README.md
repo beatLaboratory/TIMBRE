@@ -6,9 +6,11 @@ TIMBRE is a complex-valued neural network that can recover patterns from multi-c
 
 ## Notable Files
 1. **TIMBRE.py** - neural network implementation of carrier-free decoding.
-2. **toy_data_demo.ipynb** - Jupyter notebook demonstrating TIMBRE on toy data. Created and tested in Google Colab.
-3. **LFP_demo.ipynb** - Jupyter notebook demonstrating TIMBRE on real data. Created and tested in Google Colab.
+2. **toy_data_demo.ipynb** - Jupyter notebook demonstrating TIMBRE on toy data.
+3. **LFP_demo.ipynb** - Jupyter notebook demonstrating TIMBRE on real data.
 4. **helpers.py** - helper functions for preprocessing data.
+
+Notebooks were tested on Google Colab.
 
 ## References
 Agarwal, B Lustig, S Akera, E Pastalkova, AK Lee, FT Sommer. [News without the buzz: reading out weak theta rhythms in the hippocampus.](https://www.biorxiv.org/content/10.1101/2023.12.22.573160v1) bioRxiv, 2023.12. 22.573160
