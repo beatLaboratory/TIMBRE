@@ -8,7 +8,8 @@ from random import sample
 from keras import models
 from scipy import signal
 
-def test_train(lapID,which_phase,n_folds = 5,which_fold = 0):
+
+def test_train(lapID, which_phase, n_folds=5, which_fold=0):
     """
     Returns test and train samples
     
@@ -23,21 +24,22 @@ def test_train(lapID,which_phase,n_folds = 5,which_fold = 0):
     - test_inds: which samples to use for testing model
     """
     ctr = np.zeros(3)
-    use_sample = lapID[:,3] == which_phase
-    if which_phase == 2: # period where rat is staying at port
-        use_sample = use_sample & (lapID[:,2] == 1) #only use correct trials
+    use_sample = lapID[:, 3] == which_phase
+    if which_phase == 2:  # period where rat is staying at port
+        use_sample = use_sample & (lapID[:, 2] == 1)  # only use correct trials
     fold_assign = -np.ones(np.size(use_sample))
-    for i in range(int(np.max(lapID[:,0]))):
-        inds = (lapID[:,0] == i) & use_sample
+    for i in range(int(np.max(lapID[:, 0]))):
+        inds = (lapID[:, 0] == i) & use_sample
         if np.sum(inds):
-            which_arm = int(lapID[inds,1][0])
-            fold_assign[inds] = ctr[which_arm]%n_folds
+            which_arm = int(lapID[inds, 1][0])
+            fold_assign[inds] = ctr[which_arm] % n_folds
             ctr[which_arm] += 1
     test_inds = fold_assign == which_fold
     train_inds = np.isin(fold_assign, np.arange(n_folds)) & ~test_inds
-    train_inds = balanced_indices(lapID[:,1],train_inds)
+    train_inds = balanced_indices(lapID[:, 1], train_inds)
     return test_inds, train_inds
-    
+
+
 def balanced_indices(vector, bool_indices):
     """
     Returns indices that balance the number of samples for each label in vector
@@ -77,7 +79,8 @@ def balanced_indices(vector, bool_indices):
 
     return np.array(balanced_indices_set)
 
-def group_by_pos(pos,num_bins,train_inds):
+
+def group_by_pos(pos, num_bins, train_inds):
     """
     Subdivides track into bins for training linear classifier on demodulated LFP
     
@@ -91,26 +94,28 @@ def group_by_pos(pos,num_bins,train_inds):
     pos : a vector of binned positions
     """
     pos = pos - np.min(pos[train_inds])
-    pos = pos / (np.max(pos[train_inds])+10**-8)
-    pos = np.int32(np.floor(pos*num_bins))
+    pos = pos / (np.max(pos[train_inds]) + 10 ** -8)
+    pos = np.int32(np.floor(pos * num_bins))
     return pos
 
-def layer_output(X,m,layer_num):
-  """
-  Returns response of one of TIMBRE's layers
-  
-  Parameters:
-  - X: Input data
-  - m: Trained model
-  - layer_num: Which layer's output to return
-  
-  Returns:
-  - Layer's response to input
-  """
-  #stack the real and imaginary components of the data
-  X = np.concatenate((np.real(X), np.imag(X)), axis = 1) 
-  m1 = models.Model(inputs=m.input, outputs=m.layers[layer_num].output)
-  return m1.predict(X) #return output of layer layer_num
+
+def layer_output(X, m, layer_num):
+    """
+    Returns response of one of TIMBRE's layers
+
+    Parameters:
+    - X: Input data
+    - m: Trained model
+    - layer_num: Which layer's output to return
+
+    Returns:
+    - Layer's response to input
+    """
+    # stack the real and imaginary components of the data
+    X = np.concatenate((np.real(X), np.imag(X)), axis=1)
+    m1 = models.Model(inputs=m.input, outputs=m.layers[layer_num].output)
+    return m1.predict(X)  # return output of layer layer_num
+
 
 def accumarray(subs, vals, size=None, fill_value=0):
     """
@@ -155,7 +160,8 @@ def accumarray(subs, vals, size=None, fill_value=0):
 
     return result if K > 1 else result.squeeze(-1)
 
-def filter_data(data, cutoff, fs, filt_type='high', order=5, use_hilbert = False):
+
+def filter_data(data, cutoff, fs, filt_type='high', order=5, use_hilbert=False):
     """
     Applies a column-wise zero-phase filter to data
     
@@ -175,13 +181,14 @@ def filter_data(data, cutoff, fs, filt_type='high', order=5, use_hilbert = False
     nyq = 0.5 * fs
     normal_cutoff = cutoff / nyq
     b, a = signal.butter(order, normal_cutoff, btype=filt_type, analog=False)
-    data = signal.filtfilt(b, a, data,axis=0)
+    data = signal.filtfilt(b, a, data, axis=0)
     if use_hilbert:
-        data = signal.hilbert(data,axis=0)
-        
+        data = signal.hilbert(data, axis=0)
+
     return data
 
-def whiten(X,inds_train,fudge_factor=10**-5):
+
+def whiten(X, inds_train, fudge_factor=10 ** -5):
     """
     Decorrelates the input data
 
@@ -195,9 +202,9 @@ def whiten(X,inds_train,fudge_factor=10**-5):
     - u: directions of highest variance in original data
     - Xv: scaling factor used to normalize decorrelated data
     """
-    _,_,u = np.linalg.svd(X[inds_train,:],full_matrices=False,compute_uv=True)
-    X = X@np.conj(u.T)
-    Xv = np.var(X[inds_train,:],axis=0)
-    Xv = np.sqrt(Xv+sum(Xv)*fudge_factor)
-    X = X/Xv
+    _, _, u = np.linalg.svd(X[inds_train, :], full_matrices=False, compute_uv=True)
+    X = X @ np.conj(u.T)
+    Xv = np.var(X[inds_train, :], axis=0)
+    Xv = np.sqrt(Xv + sum(Xv) * fudge_factor)
+    X = X / Xv
     return X, u, Xv
