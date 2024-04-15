@@ -48,9 +48,11 @@ def carrier_based(X, Y, inds_test, inds_train, learn_rate=.001, is_categorical=T
     adam = optimizers.Adam(learning_rate=learn_rate)
     num_chans = Yc.shape[1]
     model = models.Sequential()
+    # Layer 0: Input
+    model.add(layers.Input(shape=(X.shape[1],)))
     # Layer 1: Takes a complex-valued projection of the input
     model.add(
-        layers.Dense(num_chans, input_shape=(X.shape[1],), use_bias=True, kernel_constraint=constraints.unit_norm()))
+        layers.Dense(num_chans, use_bias=True, kernel_constraint=constraints.unit_norm()))
     # Layer 2: Softmax of layer 1
     model.add(layers.Activation(activations.softmax))
     # model.add(layers.Dense(Y.shape[1],activation='softmax'))
