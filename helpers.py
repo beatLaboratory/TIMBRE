@@ -113,7 +113,7 @@ def layer_output(X, m, layer_num):
     """
     # stack the real and imaginary components of the data
     X = np.concatenate((np.real(X), np.imag(X)), axis=1)
-    m1 = models.Model(inputs=m.input, outputs=m.layers[layer_num].output)
+    m1 = models.Model(inputs=m.inputs, outputs=m.layers[layer_num].output)
     return m1.predict(X)  # return output of layer layer_num
 
 
