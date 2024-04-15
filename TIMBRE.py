@@ -48,8 +48,10 @@ def TIMBRE(X, Y, inds_test, inds_train, hidden_nodes=0, learn_rate=.001, is_cate
     else:
         num_chans = Y.shape[1]
     model = models.Sequential()
+    # Layer 0: Input
+    model.add(layers.Input(shape=(X.shape[1],))) 
     # Layer 1: Takes a complex-valued projection of the input
-    model.add(complexnn.dense.ComplexDense(num_chans, input_shape=(X.shape[1],), use_bias=False,
+    model.add(complexnn.dense.ComplexDense(num_chans, use_bias=False,
                                            kernel_constraint=constraints.unit_norm()))
     # Layer 2: Converts complex-valued output of layer 0 to a real-valued magnitude
     model.add(layers.Lambda(lambda x: (x[:, :x.shape[1] // 2] ** 2 + x[:, x.shape[1] // 2:] ** 2) ** .5))
