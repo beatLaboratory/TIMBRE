@@ -184,7 +184,6 @@ def filter_data(data, cutoff, fs, filt_type='high', order=5, use_hilbert=False):
     data = signal.filtfilt(b, a, data, axis=0)
     if use_hilbert:
         data = signal.hilbert(data, axis=0)
-
     return data
 
 
