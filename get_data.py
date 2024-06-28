@@ -2,6 +2,7 @@
 A set of helper functions for downloading and preprocessing hippocampal data.
 
 @author: Gautam Agarwal
+@author: Ben Toker
 """
 from scipy.signal import decimate
 import numpy as np
@@ -9,6 +10,7 @@ import math
 import os
 from scipy import io
 from scipy.stats import mode
+import h5py
 
 
 def get_behav(mat_file, fs=25):
@@ -108,18 +110,19 @@ def get_spikes(mat_file, fs=25):
     return sp
 
 
-def get_LFP(lfp_file, n_channels, fs=25):
+def get_LFP(lfp_file, n_channels, init_fs, fs=25):
     """
     Decimates LFPs to desired sampling rate
     
     Input:
     lfp_file = raw lfp data file of type .lfp
-    fs = sampling rate
+    init_fs = inital sampling rate of the data
+    fs = desired sampling rate (to decimate to)
 
     Output:
     X = formatted lfp data
     """
-    dec = int(1250 / fs)
+    dec = int(init_fs / fs)
     file_size = os.path.getsize(lfp_file)
     data_size = np.dtype('int16').itemsize
     total_elements = file_size // data_size
@@ -141,6 +144,40 @@ def get_LFP(lfp_file, n_channels, fs=25):
     for channel in range(n_keep):
         # Load the channel data using memmap
         channel_data = np.memmap(lfp_file, dtype='int16', mode='r', shape=(n_samples, n_channels))[:, channel]
+        # Decimate the channel data
+        X[:, channel] = decimate(channel_data, dec, axis=0)
+        print(channel)
+
+    return X
+
+def get_LFP_from_mat(lfp_data, n_channels, init_fs, fs=25):
+    """
+    Decimates LFPs to desired sampling rate from a MATLAB file
+    
+    Input:
+    lfp_data = LFP data array from MATLAB file
+    n_channels = number of channels in the data
+    init_fs = inital sampling rate of the data
+    fs = desired sampling rate (to decimate to)
+
+    Output:
+    X = formatted LFP data
+    """
+    dec = int(init_fs / fs)
+    n_samples = lfp_data.shape[1]
+
+    # Clip the rows to remove electrodes implanted in mPFC.
+    if n_channels > 256:  # sessions 1 and 2
+        n_keep = 255
+    else:  # sessions 3 and 4
+        n_keep = 192
+
+    # Process each channel individually and store in the pre-allocated array
+    final_length = math.ceil(n_samples / dec)
+    X = np.zeros((final_length, n_keep), dtype=np.float32)
+    for channel in range(n_keep):
+        # Load the channel data directly from the lfp_data array
+        channel_data = lfp_data[channel, :]
         # Decimate the channel data
         X[:, channel] = decimate(channel_data, dec, axis=0)
         print(channel)
