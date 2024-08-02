@@ -176,16 +176,18 @@ def filter_data(data, cutoff, fs, filt_type='high', order=5, use_hilbert=False):
     Returns
     -------
     data : a T x N array with filtered data
-
     """
     nyq = 0.5 * fs
-    normal_cutoff = cutoff / nyq
+    if filt_type == 'band':
+        normal_cutoff = [c / nyq for c in cutoff]
+    else:
+        normal_cutoff = cutoff / nyq
+    
     b, a = signal.butter(order, normal_cutoff, btype=filt_type, analog=False)
     data = signal.filtfilt(b, a, data, axis=0)
     if use_hilbert:
         data = signal.hilbert(data, axis=0)
     return data
-
 
 def whiten(X, inds_train, fudge_factor=10 ** -5):
     """
