@@ -179,6 +179,8 @@ def filter_data(data, cutoff, fs, filt_type='high', order=5, use_hilbert=False):
     """
     nyq = 0.5 * fs
     if filt_type == 'band':
+        if len(cutoff) != 2:
+            raise ValueError("Cutoff should contain exactly two numbers for 'band' filter type.")
         normal_cutoff = [c / nyq for c in cutoff]
     else:
         normal_cutoff = cutoff / nyq
