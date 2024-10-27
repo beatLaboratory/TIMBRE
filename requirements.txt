@@ -1,4 +1,4 @@
-keras-complex
+git+https://github.com/JesperDramsch/keras-complex.git
 numpy==1.26.4
 requests
 hdf5storage
